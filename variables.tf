@@ -57,10 +57,5 @@ variable "databases" {
             instance_type   = "db.t4g.micro"
             user            = "owner_dbuser" 
         },
-        {
-            name            = "serviceinfo"
-            instance_type   = "db.t4g.micro"
-            user            = "serviceinfo_dbuser" 
-        }
     ]
 }
