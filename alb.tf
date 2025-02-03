@@ -95,6 +95,17 @@ module "alb" {
             
             load_balancer_cross_zone_enabled = true
             target_id = module.ec2.id[0]
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
         }
         rendezvous = {
             protocol        = "HTTP"
@@ -103,6 +114,18 @@ module "alb" {
             
             load_balancer_cross_zone_enabled = true
             target_id = module.ec2.id[0]
+
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
         }
         owneronboarding = {
             protocol        = "HTTP"
@@ -111,6 +134,18 @@ module "alb" {
             
             load_balancer_cross_zone_enabled = true
             target_id = module.ec2.id[0]
+
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
         }
         serviceinfo = {
             protocol        = "HTTP"
@@ -119,6 +154,18 @@ module "alb" {
             
             load_balancer_cross_zone_enabled = true
             target_id = module.ec2.id[0]
+
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
         }
     }
 
