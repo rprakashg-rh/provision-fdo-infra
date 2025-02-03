@@ -22,13 +22,6 @@ module "alb" {
     client_keep_alive = 7200
 
     listeners = {
-        healthcheck = {
-            port        = 80
-            protocol    = "HTTP"
-            forward     = {
-                target_group_key = "healthcheck"
-            }
-        }
         manufacturing = {
             port        = 8080
             protocol    = "HTTP"
@@ -80,14 +73,6 @@ module "alb" {
     }
 
     target_groups = {
-        healthcheck = {
-            protocol    = "HTTP"
-            port        = 80
-            target_type = "instance"
-
-            load_balancer_cross_zone_enabled = true
-            target_id = module.ec2.id[0]
-        }
         manufacturing = {
             protocol        = "HTTP"
             port           = 8080
