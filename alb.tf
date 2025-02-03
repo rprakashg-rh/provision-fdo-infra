@@ -22,7 +22,7 @@ module "alb" {
     client_keep_alive = 7200
 
     listeners = {
-        manufacturing = {
+        fdo = {
             port        = 8080
             protocol    = "HTTP"
             forward = {
