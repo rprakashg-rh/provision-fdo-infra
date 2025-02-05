@@ -46,8 +46,49 @@ module "alb" {
                         type = "forward"
                         target_group_key = "manufacturing"
                     }]
-                    
-                }    
+                }
+                fdo-rendezvous-app = {
+                    priority = 300
+
+                    conditions = [{
+                        host_header = {
+                            values = ["rendezvous.${var.base_domain}"]
+                        }
+                    }]
+
+                    actions = [{
+                        type = "forward"
+                        target_group_key = "rendezvous"
+                    }]
+                }
+                fdo-owner-app = {
+                    priority = 400
+
+                    conditions = [{
+                        host_header = {
+                            values = ["owneronboarding.${var.base_domain}"]
+                        }
+                    }]
+
+                    actions = [{
+                        type = "forward"
+                        target_group_key = "owneronboarding"
+                    }]
+                }
+                fdo-serviceinfo-app = {
+                    priority = 500
+
+                    conditions = [{
+                        host_header = {
+                            values = ["serviceinfo.${var.base_domain}"]
+                        }
+                    }]
+
+                    actions = [{
+                        type = "forward"
+                        target_group_key = "serviceinfo"
+                    }]
+                }
             }
         }
     }
@@ -65,7 +106,7 @@ module "alb" {
             healthcheck = {
                 enabled             = true
                 interval            = 30
-                path                = "/"
+                path                = "/ping?app=manufacturing"
                 port                = "80"
                 healthy_threshold   = 3
                 unhealthy_threshold = 3
@@ -74,6 +115,70 @@ module "alb" {
                 matcher             = "200-399"    
             }
         }
+        rendezvous = {
+            protocol            = "HTTP"
+            protocol_version    = "HTTP1"
+            port                = "8082"
+            target_type         = "instance"
+
+            load_balancing_cross_zone_enabled = false
+
+            target_id = module.ec2.id[0]
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/ping?app=rendezvous"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
+        }
+        owneronboarding = {
+            protocol            = "HTTP"
+            protocol_version    = "HTTP1"
+            port                = "8081"
+            target_type         = "instance"
+
+            load_balancing_cross_zone_enabled = false
+
+            target_id = module.ec2.id[0]
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/ping?app=owneronboarding"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
+        }
+        serviceinfo = {
+            protocol            = "HTTP"
+            protocol_version    = "HTTP1"
+            port                = "8083"
+            target_type         = "instance"
+
+            load_balancing_cross_zone_enabled = false
+
+            target_id = module.ec2.id[0]
+            healthcheck = {
+                enabled             = true
+                interval            = 30
+                path                = "/ping?app=serviceinfo"
+                port                = "80"
+                healthy_threshold   = 3
+                unhealthy_threshold = 3
+                timeout             = 6
+                protocol            = "HTTP"
+                matcher             = "200-399"    
+            }
+        }
+        
     }
 
     route53_records = {
