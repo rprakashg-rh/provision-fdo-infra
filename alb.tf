@@ -22,124 +22,46 @@ module "alb" {
     client_keep_alive = 7200
 
     listeners = {
-        fdo = {
-            port        = 8080
+        http = {
+            port        = 80
             protocol    = "HTTP"
-            forward = {
-                target_group_key = "manufacturing"    
+            
+            fixed_response = {
+                content_type = "text/plain"
+                message_body = "Host Not Found"
+                status_code  = "404"
             }
-            conditions = [{
-                host_header = {
-                    values = ["manufacturing.${var.base_domain}"]
-                }
-            }]
-        }
-        rendezvous = {
-            port        = 8082
-            protocol    = "HTTP"
-            forward = {
-                target_group_key = "rendezvous"    
+
+            rules = {
+                fdo-manufacturing-app = {
+                    priority = 100
+
+                    conditions = [{
+                        host_header = {
+                            values = ["manufacturing.${var.base_domain}"]
+                        }
+                    }]
+
+                    actions = [{
+                        type = "forward"
+                        target_group_key = "manufacturing"
+                    }]
+                    
+                }    
             }
-            conditions = [{
-                host_header = {
-                    values = ["rendezvous.${var.base_domain}"]
-                }
-            }]
-        }
-        owneronboarding = {
-            port        = 8081
-            protocol    = "HTTP"
-            forward = {
-                target_group_key = "owneronboarding"    
-            }
-            conditions = [{
-                host_header = {
-                    values = ["owneronboarding.${var.base_domain}"]
-                }
-            }]
-        }
-        serviceinfo = {
-            port        = 8083
-            protocol    = "HTTP"
-            forward = {
-                target_group_key = "serviceinfo"    
-            }
-            conditions = [{
-                host_header = {
-                    values = ["serviceinfo.${var.base_domain}"]
-                }
-            }]
         }
     }
 
     target_groups = {
         manufacturing = {
-            protocol        = "HTTP"
-            port           = 8080
-            target_type     = "instance"
-            
-            load_balancer_cross_zone_enabled = true
-            target_id = module.ec2.id[0]
-            healthcheck = {
-                enabled             = true
-                interval            = 30
-                path                = "/"
-                port                = "80"
-                healthy_threshold   = 3
-                unhealthy_threshold = 3
-                timeout             = 6
-                protocol            = "HTTP"
-                matcher             = "200-399"    
-            }
-        }
-        rendezvous = {
-            protocol        = "HTTP"
-            port           = 8082
-            target_type     = "instance"
-            
-            load_balancer_cross_zone_enabled = true
-            target_id = module.ec2.id[0]
+            protocol            = "HTTP"
+            protocol_version    = "HTTP1"
+            port                = "8080"
+            target_type         = "instance"
 
-            healthcheck = {
-                enabled             = true
-                interval            = 30
-                path                = "/"
-                port                = "80"
-                healthy_threshold   = 3
-                unhealthy_threshold = 3
-                timeout             = 6
-                protocol            = "HTTP"
-                matcher             = "200-399"    
-            }
-        }
-        owneronboarding = {
-            protocol        = "HTTP"
-            port           = 8081
-            target_type     = "instance"
-            
-            load_balancer_cross_zone_enabled = true
-            target_id = module.ec2.id[0]
+            load_balancing_cross_zone_enabled = false
 
-            healthcheck = {
-                enabled             = true
-                interval            = 30
-                path                = "/"
-                port                = "80"
-                healthy_threshold   = 3
-                unhealthy_threshold = 3
-                timeout             = 6
-                protocol            = "HTTP"
-                matcher             = "200-399"    
-            }
-        }
-        serviceinfo = {
-            protocol        = "HTTP"
-            port           = 8083
-            target_type     = "instance"
-            
-            load_balancer_cross_zone_enabled = true
             target_id = module.ec2.id[0]
-
             healthcheck = {
                 enabled             = true
                 interval            = 30
@@ -176,7 +98,7 @@ module "alb" {
             zone_id = data.aws_route53_zone.this.id
         }
         owneronboardingA = {
-            name    = "owner"
+            name    = "owneronboarding"
             type    = "A"
             zone_id = data.aws_route53_zone.this.id
         }
