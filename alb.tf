@@ -22,7 +22,16 @@ module "alb" {
     client_keep_alive = 7200
 
     listeners = {
-        http = {
+        http8082 = {
+            port        = 8082
+            protocol    = "HTTP"
+
+            forward = {
+                target_group_key = "rendezvous"
+            }
+        }
+
+        http80 = {
             port        = 80
             protocol    = "HTTP"
             

@@ -120,12 +120,20 @@ module "private_subnet_sg" {
 
     #allow all outbound https traffic to internet
     egress_with_cidr_blocks = [{
-        from_port = 443
-        to_port   = 443
-        protocol  = "tcp"
-        description = "HTTPS Traffic to any IP"
-        cidr_blocks = "0.0.0.0/0"
-    }]
+            from_port = 443
+            to_port   = 443
+            protocol  = "tcp"
+            description = "HTTPS Traffic to any IP"
+            cidr_blocks = "0.0.0.0/0"
+        },
+        {
+            from_port = 80
+            to_port   = 80
+            protocol  = "tcp"
+            description = "HTTP Traffic to any IP"
+            cidr_blocks = "0.0.0.0/0"
+        }
+    ]
 }
 
 module "db_subnet_sg" {
