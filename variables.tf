@@ -24,7 +24,7 @@ variable "ssh_key" {
 
 variable "base_domain" {
     description = "Base domain name"
-    default = "sandbox2519.opentlc.com"
+    default = "sandbox1568.opentlc.com"
     type = string
 }
 
