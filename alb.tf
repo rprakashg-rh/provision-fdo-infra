@@ -103,7 +103,7 @@ module "alb" {
             load_balancing_cross_zone_enabled = false
 
             target_id = module.ec2.id[0]
-            healthcheck = {
+            health_check = {
                 enabled             = true
                 interval            = 30
                 path                = "/ping?app=manufacturing"
@@ -124,7 +124,7 @@ module "alb" {
             load_balancing_cross_zone_enabled = false
 
             target_id = module.ec2.id[0]
-            healthcheck = {
+            health_check = {
                 enabled             = true
                 interval            = 30
                 path                = "/ping?app=rendezvous"
@@ -145,7 +145,7 @@ module "alb" {
             load_balancing_cross_zone_enabled = false
 
             target_id = module.ec2.id[0]
-            healthcheck = {
+            health_check = {
                 enabled             = true
                 interval            = 30
                 path                = "/ping?app=owneronboarding"
@@ -166,7 +166,7 @@ module "alb" {
             load_balancing_cross_zone_enabled = false
 
             target_id = module.ec2.id[0]
-            healthcheck = {
+            health_check = {
                 enabled             = true
                 interval            = 30
                 path                = "/ping?app=serviceinfo"
