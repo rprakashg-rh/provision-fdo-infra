@@ -10,12 +10,6 @@ variable instance_type {
     default = "m5.2xlarge"
 }
 
-variable "ami" {
-    description = "AMI to use for EC2 instance running FDO services"
-    type = string
-    default = "ami-0f7197c592205b389"
-}
-
 variable "ssh_key" {
     description = "SSH key to ssh into EC2 instance"
     type = string

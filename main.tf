@@ -13,6 +13,21 @@ resource "aws_key_pair" "sshkeypair" {
     public_key = file("~/.ssh/${var.ssh_key}.pub")
 }
 
+data "aws_ami" "latest_rhel9_ami" {
+  most_recent = true
+  owners      = ["309956199498"] # official AMI owner ID
+
+  filter {
+    name   = "name"
+    values = ["RHEL-9.0.0_HVM-*"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
 locals {
     vpc_cidr        = "10.0.0.0/16"
     stack_name      = "fdo-infra"

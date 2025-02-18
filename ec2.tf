@@ -4,7 +4,7 @@ module "ec2" {
 
     name            = "${local.stack_name}-aio-node"
     instance_type   = var.instance_type
-    ami             = var.ami
+    ami             = data.aws_ami.latest_rhel9_ami.id
 
     subnet_id                     = tolist(module.vpc.private_subnets)[0]
     key_name                      = var.ssh_key

@@ -6,6 +6,8 @@ module "alb" {
     vpc_id              = module.vpc.vpc_id
     subnets             = module.vpc.public_subnets
     load_balancer_type  = "application"
+    
+    enable_deletion_protection = false
 
     create_security_group = false
     security_groups = [module.public_subnet_sg.security_group_id]
