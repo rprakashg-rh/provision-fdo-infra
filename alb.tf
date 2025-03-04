@@ -40,7 +40,7 @@ module "alb" {
 
                     conditions = [{
                         host_header = {
-                            values = ["manufacturing.${var.base_domain}"]
+                            values = ["${var.config.manufacturing.dns_prefix}.${var.config.base_domain}"]
                         }
                     }]
 
@@ -50,11 +50,11 @@ module "alb" {
                     }]
                 }
                 fdo-rendezvous-app = {
-                    priority = 300
+                    priority = 200
 
                     conditions = [{
                         host_header = {
-                            values = ["rendezvous.${var.base_domain}"]
+                            values = ["${var.config.rendezvous.dns_prefix}.${var.config.base_domain}"]
                         }
                     }]
 
@@ -68,27 +68,13 @@ module "alb" {
 
                     conditions = [{
                         host_header = {
-                            values = ["owneronboarding.${var.base_domain}"]
+                            values = ["${var.config.owneronboarding.dns_prefix}.${var.config.base_domain}"]
                         }
                     }]
 
                     actions = [{
                         type = "forward"
                         target_group_key = "owneronboarding"
-                    }]
-                }
-                fdo-serviceinfo-app = {
-                    priority = 500
-
-                    conditions = [{
-                        host_header = {
-                            values = ["serviceinfo.${var.base_domain}"]
-                        }
-                    }]
-
-                    actions = [{
-                        type = "forward"
-                        target_group_key = "serviceinfo"
                     }]
                 }
             }
@@ -99,16 +85,16 @@ module "alb" {
         manufacturing = {
             protocol            = "HTTP"
             protocol_version    = "HTTP1"
-            port                = "8080"
+            port                = "${var.config.manufacturing.port}"
             target_type         = "instance"
 
             load_balancing_cross_zone_enabled = false
 
-            target_id = module.ec2.id[0]
+            target_id = module.manufacturing.id[0]
             health_check = {
                 enabled             = true
                 interval            = 30
-                path                = "/ping?app=manufacturing"
+                path                = "/ping"
                 port                = "80"
                 healthy_threshold   = 3
                 unhealthy_threshold = 3
@@ -120,16 +106,16 @@ module "alb" {
         rendezvous = {
             protocol            = "HTTP"
             protocol_version    = "HTTP1"
-            port                = "8082"
+            port                = "${var.config.rendezvous.port}"
             target_type         = "instance"
 
             load_balancing_cross_zone_enabled = false
 
-            target_id = module.ec2.id[0]
+            target_id = module.rendezvous.id[0]
             health_check = {
                 enabled             = true
                 interval            = 30
-                path                = "/ping?app=rendezvous"
+                path                = "/ping"
                 port                = "80"
                 healthy_threshold   = 3
                 unhealthy_threshold = 3
@@ -141,16 +127,16 @@ module "alb" {
         owneronboarding = {
             protocol            = "HTTP"
             protocol_version    = "HTTP1"
-            port                = "8081"
+            port                = "${var.config.owneronboarding.port}"
             target_type         = "instance"
 
             load_balancing_cross_zone_enabled = false
 
-            target_id = module.ec2.id[0]
+            target_id = module.owneronboarding.id[0]
             health_check = {
                 enabled             = true
                 interval            = 30
-                path                = "/ping?app=owneronboarding"
+                path                = "/ping"
                 port                = "80"
                 healthy_threshold   = 3
                 unhealthy_threshold = 3
@@ -159,69 +145,22 @@ module "alb" {
                 matcher             = "200-399"    
             }
         }
-        serviceinfo = {
-            protocol            = "HTTP"
-            protocol_version    = "HTTP1"
-            port                = "8083"
-            target_type         = "instance"
-
-            load_balancing_cross_zone_enabled = false
-
-            target_id = module.ec2.id[0]
-            health_check = {
-                enabled             = true
-                interval            = 30
-                path                = "/ping?app=serviceinfo"
-                port                = "80"
-                healthy_threshold   = 3
-                unhealthy_threshold = 3
-                timeout             = 6
-                protocol            = "HTTP"
-                matcher             = "200-399"    
-            }
-        }
-        
     }
 
     route53_records = {
         manufacturingA = {
-            name    = "manufacturing"
+            name    = "${var.config.manufacturing.dns_prefix}"
             type    = "A"
-            zone_id = data.aws_route53_zone.this.id
-        }
-        manufacturingAAAA = {
-            name    = "manufacturing"
-            type    = "AAAA"
             zone_id = data.aws_route53_zone.this.id
         }
         rendezvousA = {
-            name    = "rendezvous"
+            name    = "${var.config.rendezvous.dns_prefix}"
             type    = "A"
-            zone_id = data.aws_route53_zone.this.id
-        }
-        rendezvousAAAA = {
-            name    = "rendezvous"
-            type    = "AAAA"
             zone_id = data.aws_route53_zone.this.id
         }
         owneronboardingA = {
-            name    = "owneronboarding"
+            name    = "${var.config.owneronboarding.dns_prefix}"
             type    = "A"
-            zone_id = data.aws_route53_zone.this.id
-        }
-        owneronboardingAAAA = {
-            name    = "owneronboarding"
-            type    = "AAAA"
-            zone_id = data.aws_route53_zone.this.id
-        }
-        serviceinfoA = {
-            name    = "serviceinfo"
-            type    = "A"
-            zone_id = data.aws_route53_zone.this.id
-        }
-        serviceinfoAAAA = {
-            name    = "serviceinfo"
-            type    = "AAAA"
             zone_id = data.aws_route53_zone.this.id
         }
     }

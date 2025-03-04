@@ -2,7 +2,7 @@ module "rds" {
     source  = "terraform-aws-modules/rds/aws"
     version = "6.3.1"
 
-    for_each = {for i, instance in var.databases: instance.name => instance}
+    for_each = {for i, instance in var.config.dbs: instance.name => instance}
 
     identifier = "${local.stack_name}-${each.value.name}-pg-instance"
     
@@ -11,7 +11,7 @@ module "rds" {
     family                  = "postgres15"
     major_engine_version    = "15"
     instance_class          = each.value.instance_type
-
+    
     allocated_storage = 20
     max_allocated_storage = 200
     publicly_accessible = false

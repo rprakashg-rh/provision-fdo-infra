@@ -2,7 +2,18 @@ output "alb_dns_name" {
   description = "The DNS name of the load balancer"
   value       = module.alb.dns_name
 }
-output "rds_endpoints" {
-  description = "RDS database endpoints"
-  value = { for k, db in module.rds : k => db.db_instance_endpoint}
+
+output "manufacturing_private_dns" {
+  description = "Manufacturing server private DNS"
+  value       = module.manufacturing.private_dns
+}
+
+output "rendezvous_private_dns" {
+  description = "Rendezvous server private DNS"
+  value       = module.rendezvous.private_dns
+}
+
+output "oob_private_dns" {
+  description = "Owner Onboarding server private DNS"
+  value       = module.owneronboarding.private_dns
 }

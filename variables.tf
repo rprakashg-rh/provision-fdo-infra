@@ -1,55 +1,89 @@
-variable region {
-    description = "AWS Region"
-    type = string
-    default = "us-west-2"
-}
-
-variable instance_type {
-    description = "AWS Instance type to use for EC2 instance running FDO services"
-    type = string
-    default = "m5.2xlarge"
-}
-
-variable "ssh_key" {
-    description = "SSH key to ssh into EC2 instance"
-    type = string
-    default = "fdo_rsa"
-}
-
-variable "base_domain" {
-    description = "Base domain name"
-    default = "sandbox1568.opentlc.com"
-    type = string
-}
-
 variable "my_ip" {
     description = "IP Address block of current local machine"
     type = string
     default = "136.27.40.26/32"    
 }
 
-variable "databases" {
-    description = "AWS RDS Postgresql instances that need to be provisioned"
-    type    = list(object({
-      name = string
-      instance_type = string
-      user          = string 
-    }))
-    default = [
+variable "config" {
+    description = "FDO Stack configuration"
+    type = object({
+      name = string,
+      base_domain = string,
+      region = string,
+      ssh_key = string
+
+      dbs = list(object({
+        name          = string,
+        instance_type = string,
+        user          = string,
+      }))
+
+      manufacturing = object({
+        name            = string,
+        dns_prefix      = string,
+        instance_type   = string
+        port            = number,
+        replicas        = number, 
+      }),
+      rendezvous = object({
+        name            = string,
+        dns_prefix      = string,
+        instance_type   = string
+        port            = number,
+        replicas        = number, 
+      }),
+      owneronboarding = object({
+        name            = string,
+        dns_prefix      = string,
+        instance_type   = string
+        port            = number,
+        replicas        = number, 
+      }),
+    })
+    default = {
+      name        = "fdo-stack"
+      base_domain = "sandbox559.opentlc.com",
+      region      = "us-west-2",
+      ssh_key     = "fdo_rsa",
+
+      dbs = [
         {
-            name            = "manufacturing"
-            instance_type   = "db.t4g.micro"
-            user            = "manufacturing_dbuser" 
+          name            = "mfgownervouchers",
+          instance_type   = "db.t4g.micro",
+          user            = "mfgdbuser",
         },
         {
-            name            = "rendezvous"
-            instance_type   = "db.t4g.micro"
-            user            = "rendezvous_dbuser" 
+          name            = "rvsregistered",
+          instance_type   = "db.t4g.micro",
+          user            = "rvsdbuser",
         },
         {
-            name            = "owneronboarding"
-            instance_type   = "db.t4g.micro"
-            user            = "owner_dbuser" 
-        },
-    ]
+          name            = "ownervouchers",
+          instance_type   = "db.t4g.micro",
+          user            = "oobdbuser",        
+        }
+      ]
+
+      manufacturing = {
+        name            = "mfg-node",
+        dns_prefix      = "manufacturing"
+        instance_type   = "t2.large",
+        port            = 8080,
+        replicas        = 1,
+      },
+      rendezvous = { 
+        name          = "rvs-node",
+        dns_prefix    = "rendezvous",
+        instance_type = "t2.large",
+        port          = 8082
+        replicas      = 1,
+      },
+      owneronboarding = {
+        name            = "o-ob-node",
+        dns_prefix      = "owneronboarding",
+        instance_type   = "t2.large",
+        port            = 8081
+        replicas        = 1,
+      }
+    }
 }

@@ -8,7 +8,7 @@ module "bastion" {
   instance_type                 = "t2.medium"
   ami                           = data.aws_ami.latest_rhel9_ami.id
   subnet_id                     = tolist(module.vpc.public_subnets)[0]
-  key_name                      = var.ssh_key
+  key_name                      = var.config.ssh_key
   vpc_security_group_ids        = [module.public_subnet_sg.security_group_id]
   associate_public_ip_address   = true
   ipv6_addresses = null
