@@ -10,13 +10,15 @@ variable "config" {
       name = string,
       base_domain = string,
       region = string,
-      ssh_key = string
+      ssh_key = string,
+      admin_user = string,
+      admin_user_password = string,
 
       dbs = list(object({
         name          = string,
         instance_type = string,
         user          = string,
-      }))
+      })),
 
       manufacturing = object({
         name            = string,
@@ -41,11 +43,12 @@ variable "config" {
       }),
     })
     default = {
-      name        = "fdo-stack"
-      base_domain = "sandbox559.opentlc.com",
-      region      = "us-west-2",
-      ssh_key     = "fdo_rsa",
-
+      name                = "fdo-stack"
+      base_domain         = "sandbox559.opentlc.com",
+      region              = "us-west-2",
+      ssh_key             = "fdo_rsa",
+      admin_user          = "admin",
+      admin_user_password = "R3dh4t1!",
       dbs = [
         {
           name            = "mfgownervouchers",
@@ -62,8 +65,7 @@ variable "config" {
           instance_type   = "db.t4g.micro",
           user            = "oobdbuser",        
         }
-      ]
-
+      ],
       manufacturing = {
         name            = "mfg-node",
         dns_prefix      = "manufacturing"
